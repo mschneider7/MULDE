@@ -18,11 +18,19 @@ def get_dataset(seed=None):
         centers = torch.tensor([(scale_centers * x, scale_centers * y) for x, y in centers])
         return sq2 * (0.3 * z + centers[torch.randint(len(centers), size=(n_samples,))])
 
-    N = 10000
+    # N = 10000
 
-    data_train_id = get_toy_dataset(N)
-    data_test_id = get_toy_dataset(N // 2)
-    data_test_ood = get_toy_dataset(N // 2, anomaly_centers=True)
+    # data_train_id = get_toy_dataset(N)
+    # data_test_id = get_toy_dataset(N // 2)
+    # data_test_ood = get_toy_dataset(N // 2, anomaly_centers=True)
+
+    data_train = np.load('ped2_train_features.npy')
+    data_test_ood = np.load('ped2_test_features.npy')
+
+    # Split data_train into data_train_id and data_test_id with 80:20 ratio
+    split_idx = int(0.8 * len(data_train))
+    data_train_id = data_train[:split_idx]
+    data_test_id = data_train[split_idx:]
 
     data_test = np.vstack([data_test_id, data_test_ood])
     labels_test = np.hstack([np.zeros(len(data_test_id)), np.ones(len(data_test_ood))])
